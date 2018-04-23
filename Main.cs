@@ -10,7 +10,7 @@ namespace FTGridBuilding
         static void Main(string[] args)
         {
             Console.WriteLine(System.Environment.CurrentDirectory);
-            FTGridBuilding.LPModel.LPSolve.BuildInitialModel(-4, 4, -4, 4, new TileGrid(10));
+            FTGridBuilding.LPModel.LPSolve.BuildInitialModel(-4, 4, -4, 4, new TileGrid(10));         
         }
     }
 }
