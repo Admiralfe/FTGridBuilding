@@ -10,6 +10,7 @@ using Random = System.Random;
 
 using FTGridBuilding.LPModel;
 using FTGridBuilding.FlowTileUtils;
+using static FTGridBuilding.Settings;
 
 
 namespace FTGridBuilding.GridBuilding
@@ -82,6 +83,7 @@ namespace FTGridBuilding.GridBuilding
         {
             System.Xml.XmlDocument xmlDoc = new System.Xml.XmlDocument();
             System.Xml.XmlElement root = xmlDoc.CreateElement("root");
+            xmlDoc.AppendChild(root);
             foreach (var tile in tiles)
             {
                 root.AppendChild(tile.ToXmlElement(xmlDoc));
@@ -94,17 +96,13 @@ namespace FTGridBuilding.GridBuilding
             FTGridBuilding.LPModel.LPSolve.BuildInitialModel(minXFlux, maxXFlux, minYFlux, maxYFlux, tileGrid);
             List<FlowTile> validTiles = ValidTiles(row, col);    
             
-            string pathToScript = "/home/felix/FlowTiles/ui.py";
-            string path = Directory.GetCurrentDirectory();
-            string gridPath = path + "grid.xml";
-            string validTilesPath = path + "validtiles.xml";
-            tileGrid.WriteToXML(gridPath);    
-            WriteTilesToXML(validTiles, validTilesPath);
+            tileGrid.WriteToXML(PathToGridXML);    
+            WriteTilesToXML(validTiles, PathToValidTilesXML);
             
             ProcessStartInfo start = new ProcessStartInfo();
-            start.FileName = "/usr/bin/python3";
+            start.FileName = Python;
             start.Arguments = string.Format("{0} {1} {2} {3} {4} {5}",
-                pathToScript, gridDimension, row, col, gridPath, validTilesPath);
+                PythonScriptPath, gridDimension, row, col, PathToGridXML, PathToValidTilesXML);
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             

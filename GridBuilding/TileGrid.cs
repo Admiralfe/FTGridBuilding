@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
+
 using FTGridBuilding.FlowTileUtils;
+using static FTGridBuilding.Settings;
 
 namespace FTGridBuilding.GridBuilding {
     public class TileGrid : IEnumerable<FlowTile>
@@ -82,6 +84,7 @@ namespace FTGridBuilding.GridBuilding {
         {
             XmlDocument xmlDoc = new XmlDocument();
             XmlElement root = xmlDoc.CreateElement("tilegrid");
+            xmlDoc.AppendChild(root);
 
             for (int i = 0; i < Dimension; i++)
             {
