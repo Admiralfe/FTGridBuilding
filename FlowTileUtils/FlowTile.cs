@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Numerics;
 
+using static FTGridBuilding.Settings;
 
 namespace FTGridBuilding.FlowTileUtils
 {   
@@ -329,8 +330,8 @@ namespace FTGridBuilding.FlowTileUtils
                 for (int x = 0; x < GridSize; x++)
                 {
                     XmlElement velocity = xmlDoc.CreateElement("velocity");
-                    velocity.SetAttribute("relX", x.ToString());
-                    velocity.SetAttribute("relY", y.ToString());
+                    velocity.SetAttribute("relX", (x/(float)GridSize).ToString());
+                    velocity.SetAttribute("relY", (y/(float)GridSize).ToString());
                     velocity.SetAttribute("vx", Velocity(x, y).X.ToString());
                     velocity.SetAttribute("vy", Velocity(x, y).Y.ToString());
                     element.AppendChild(velocity);

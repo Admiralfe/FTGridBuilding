@@ -9,7 +9,7 @@ namespace FTGridBuilding
     {
         static void Main(string[] args)
         {
-            GridBuilder gridBuilder = new GridBuilder(-4, 4, -4, 4, 10, 15);
+            GridBuilder gridBuilder = new GridBuilder(-4, 4, -4, 4, 5, 10);
 
             for (int row = 0; row < gridBuilder.gridDimension; row++) 
             {
@@ -21,7 +21,7 @@ namespace FTGridBuilding
             }
 
             TileGrid tileGrid = gridBuilder.GetTileGrid();
-            tileGrid.WriteToXML("~/FTGridBuilding/TileGrid.xml");
+            tileGrid.WriteToXML("TileGrid.xml");
         }
     }
 }

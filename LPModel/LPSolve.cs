@@ -51,7 +51,7 @@ namespace FTGridBuilding.LPModel
                     if (!currentTileGrid.HasTile(row, column))
                     {
                         tileEdges = TileEdgeIndices(row, column, gridDimension);
-                        lpsolve.add_constraintex(LpModel, 4, new double[] {1, -1, -1, 1}, tileEdges,
+                        lpsolve.add_constraintex(LpModel, 4, new double[] {- 1, -1, 1, 1}, tileEdges,
                             lpsolve.lpsolve_constr_types.EQ, 0);
                     }
                 }

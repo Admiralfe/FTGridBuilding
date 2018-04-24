@@ -94,7 +94,15 @@ namespace FTGridBuilding.GridBuilding
         public FlowTile AskUserForTile(int row, int col)
         {
             FTGridBuilding.LPModel.LPSolve.BuildInitialModel(minXFlux, maxXFlux, minYFlux, maxYFlux, tileGrid);
-            List<FlowTile> validTiles = ValidTiles(row, col);    
+            List<FlowTile> validTiles = ValidTiles(row, col);
+
+            if (validTiles.Count == 1) 
+            {
+                Console.WriteLine("There was only one valid tile, so it was placed in the spot.");
+                Console.WriteLine("Top flux: {0}, Right Flux: {1}, Bottom Flux: {2}, Left Flux {3}", 
+                    validTiles[0].Flux.TopEdge, validTiles[0].Flux.RightEdge, validTiles[0].Flux.BottomEdge, validTiles[0].Flux.LeftEdge);
+                return validTiles[0];
+            } 
             
             tileGrid.WriteToXML(PathToGridXML);    
             WriteTilesToXML(validTiles, PathToValidTilesXML);
@@ -119,6 +127,11 @@ namespace FTGridBuilding.GridBuilding
 
             //Process python = Process.Start(start);
             //python.WaitForExit();
+            foreach (FlowTile tile in validTiles) 
+            {
+                Console.WriteLine("Top flux: {0}, Right Flux: {1}, Bottom Flux: {2}, Left Flux {3}", 
+                    tile.Flux.TopEdge, tile.Flux.RightEdge, tile.Flux.BottomEdge, tile.Flux.LeftEdge);
+            }
             Console.WriteLine("Which tile do you want at row {0}, column {1}. Type a number:", row, col);
             var num = Convert.ToInt32(Console.ReadLine());
                         

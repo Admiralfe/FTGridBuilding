@@ -17,7 +17,7 @@ grid_ax = grid_fig.add_subplot(111)
 
 valid_tiles_fig = plt.figure()
 
-#grid_ax.axis([0, grid_size, 0, grid_size])
+grid_ax.axis([0, grid_size, 0, grid_size])
 
 for i in range(1, grid_size):
     grid_ax.axhline(i, 0, grid_size, c = 'r')
@@ -32,20 +32,22 @@ for tile in velocity_root:
         y = ymin + float(vel.get("relY"))
         vx = float(vel.get("vx"))
         vy = float(vel.get("vy"))
-        grid_ax.quiver(x, y, vx, vy)
+        grid_ax.quiver(x, y, vx, vy, angles = 'xy', scale_units = 'xy', scale = 4, width = 0.001)
 
 no_valid_tiles = len(valid_tiles_root)
-valid_tiles_axes = valid_tiles_fig.subplots(int((no_valid_tiles - no_valid_tiles%3)/3 + 1), 3)
+valid_tiles_axes = []
+for i in range(0, no_valid_tiles):
+    valid_tiles_axes.append(valid_tiles_fig.add_subplot(int((no_valid_tiles - no_valid_tiles%3)/3 + 1), 3, i + 1))
 
 for i in range(0, no_valid_tiles):
     ax = valid_tiles_axes[i]
     ax.set_title("")
-    for vel in root[i]:
+    for vel in valid_tiles_root[i]:
         x = float(vel.get("relX"))
         y = float(vel.get("relY"))
         vx = float(vel.get("vx"))
         vy = float(vel.get("vy"))
-        ax.quiver(x, y, vx, vy)
+        ax.quiver(x, y, vx, vy, angles = 'xy', scale_units = 'xy', scale = 4)
 
 plt.show()
 
