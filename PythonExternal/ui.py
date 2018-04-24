@@ -35,7 +35,7 @@ for tile in velocity_root:
         grid_ax.quiver(x, y, vx, vy)
 
 no_valid_tiles = len(valid_tiles_root)
-valid_tiles_axes = valid_tiles_fig.add_subplot(int((no_valid_tiles - no_valid_tiles%3)/3 + 1), 3)
+valid_tiles_axes = valid_tiles_fig.subplots(int((no_valid_tiles - no_valid_tiles%3)/3 + 1), 3)
 
 for i in range(0, no_valid_tiles):
     ax = valid_tiles_axes[i]
