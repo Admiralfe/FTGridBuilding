@@ -30,10 +30,9 @@ namespace FTGridBuilding.LPModel
         /// <param name="maxXFlux">Maximum flux in X direction as an integer</param>
         /// <param name="minYFlux">Minimum flux in Y direction as an integer</param>
         /// <param name="maxYFlux">Maximum flux in Y direction as an integer</param>
-        /// <param name="currentTileGrid">The current incomplete tile grid</param>
-        /// <param name="zeroIndexes">The edges which boundary conditions specify must have zero flux.</param>
+        /// <param name="currentTileGrid"></param>
         public static void BuildInitialModel(int minXFlux, int maxXFlux, int minYFlux, int maxYFlux,
-            TileGrid currentTileGrid, int[] zeroIndexes)
+            TileGrid currentTileGrid, int?[,][] boundaryConditions)
         {
             int gridDimension = currentTileGrid.Dimension;
 
@@ -55,7 +54,7 @@ namespace FTGridBuilding.LPModel
                     if (!currentTileGrid.HasTile(row, column))
                     {
                         tileEdges = TileEdgeIndices(row, column, gridDimension);
-                        lpsolve.add_constraintex(LpModel, 4, new double[] {- 1, -1, 1, 1}, tileEdges,
+                        lpsolve.add_constraintex(LpModel, 4, new double[] {-1, -1, 1, 1}, tileEdges,
                             lpsolve.lpsolve_constr_types.EQ, 0);
                     }
                 }
@@ -77,32 +76,36 @@ namespace FTGridBuilding.LPModel
                         //Set the bounds for each edge flow. Zero if it is a boundary edge.
                         if (!edgeSetFlag[tileEdges[(int) Direction.Top]])
                         {
-                            if (zeroIndexes.Contains(tileEdges[(int) Direction.Top]))
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Top], 0, 0);
+                            int? boundaryCondition = boundaryConditions[row, column][(int) Direction.Top];
+                            if (boundaryCondition != null)
+                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Top], (double) boundaryCondition, (double) boundaryCondition);
                             else
                                 lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Top], minYFlux, maxYFlux);
                         }
 
                         if (!edgeSetFlag[tileEdges[(int) Direction.Right]])
                         {
-                            if (zeroIndexes.Contains(tileEdges[(int) Direction.Right]))
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Right], 0, 0);
+                            int? boundaryCondition = boundaryConditions[row, column][(int) Direction.Right];
+                            if (boundaryCondition != null)
+                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Right], (double) boundaryCondition, (double) boundaryCondition);
                             else
                                 lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Right], minXFlux, maxXFlux);
                         }
 
                         if (!edgeSetFlag[tileEdges[(int) Direction.Bottom]])
                         {
-                            if (zeroIndexes.Contains(tileEdges[(int) Direction.Bottom]))
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Bottom], 0, 0);
+                            int? boundaryCondition = boundaryConditions[row, column][(int) Direction.Bottom];
+                            if (boundaryCondition != null)
+                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Bottom], (double) boundaryCondition, (double) boundaryCondition);
                             else
                                 lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Bottom], minYFlux, maxYFlux);
                         }
 
                         if (!edgeSetFlag[tileEdges[(int) Direction.Left]])
                         {
-                            if (zeroIndexes.Contains(tileEdges[(int) Direction.Left]))
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Left], 0, 0);
+                            int? boundaryCondition = boundaryConditions[row, column][(int) Direction.Left];
+                            if (boundaryCondition != null)
+                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Left], (double) boundaryCondition, (double) boundaryCondition);
                             else
                                 lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Left], minXFlux, maxXFlux);
                         }
@@ -249,7 +252,7 @@ namespace FTGridBuilding.LPModel
         /// <param name="colNumber">Column number of tile</param>
         /// <param name="gridDimension">The dimension of the grid</param>
         /// <returns></returns>
-        private static int[] TileEdgeIndices(int rowNumber, int colNumber, int gridDimension)
+        public static int[] TileEdgeIndices(int rowNumber, int colNumber, int gridDimension)
         {
             //1d index of current cell
             int cellIndex = rowNumber * gridDimension + colNumber;
