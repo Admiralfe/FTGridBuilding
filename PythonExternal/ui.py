@@ -41,7 +41,7 @@ for i in range(0, no_valid_tiles):
 
 for i in range(0, no_valid_tiles):
     ax = valid_tiles_axes[i]
-    ax.set_title("")
+    ax.set_title(i)
     for vel in valid_tiles_root[i]:
         x = float(vel.get("relX"))
         y = float(vel.get("relY"))
@@ -49,8 +49,10 @@ for i in range(0, no_valid_tiles):
         vy = float(vel.get("vy"))
         ax.quiver(x, y, vx, vy, angles = 'xy', scale_units = 'xy', scale = 4)
 
+def onclick(event):
+    print(event.inaxes.get_title())
+    sys.exit(0)
+
+cid = valid_tiles_fig.canvas.connect('button_press_event', onclick)
+
 plt.show()
-
-
-
-
