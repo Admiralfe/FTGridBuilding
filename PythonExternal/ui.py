@@ -53,6 +53,6 @@ def onclick(event):
     print(event.inaxes.get_title())
     sys.exit(0)
 
-cid = valid_tiles_fig.canvas.connect('button_press_event', onclick)
+cid = valid_tiles_fig.canvas.mpl_connect('button_press_event', onclick)
 
 plt.show()

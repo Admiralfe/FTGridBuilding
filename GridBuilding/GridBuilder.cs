@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Numerics;
+using System.Xml;
 using Random = System.Random;
 
 using FTGridBuilding.LPModel;
@@ -143,13 +144,13 @@ namespace FTGridBuilding.GridBuilding
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             
-            
+            string result;
             using (Process process = Process.Start(start))
             {
                 using (StreamReader reader = process.StandardOutput)
                 {
-                    string result = reader.ReadToEnd();
-                    //Console.WriteLine(result);
+                    result = reader.ReadToEnd();
+                    Console.WriteLine(result);
                 }
             }
             
@@ -161,13 +162,13 @@ namespace FTGridBuilding.GridBuilding
                 Console.WriteLine("Top flux: {0}, Right Flux: {1}, Bottom Flux: {2}, Left Flux {3}", 
                     tile.Flux.TopEdge, tile.Flux.RightEdge, tile.Flux.BottomEdge, tile.Flux.LeftEdge);
             }
-            Console.WriteLine("Which tile do you want at row {0}, column {1}. Type a number:", row, col);
-            var num = Convert.ToInt32(Console.ReadLine());
+            //Console.WriteLine("Which tile do you want at row {0}, column {1}. Type a number:", row, col);
+            //var num = Convert.ToInt32(Console.ReadLine());
                         
             //python.Close();
             LPSolve.FreeModel();
 
-            return validTiles[num];
+            return validTiles[Convert.ToInt32(result)];
             }
         
         public TileGrid BuildRandomTileGrid()
@@ -528,8 +529,8 @@ namespace FTGridBuilding.GridBuilding
             List<FlowTile> validTiles =
                 LPSolve.FilterValidTiles(currentValidTiles, rowNumber, colNumber, gridDimension);
 
-            Console.WriteLine("final number of tiles: " + validTiles.Count);
-            
+            //Console.WriteLine("final number of tiles: " + validTiles.Count);
+            /*
             foreach (FlowTile tile in validTiles)
             {
                 Console.WriteLine("Top: " + tile.Flux.TopEdge);
@@ -537,10 +538,35 @@ namespace FTGridBuilding.GridBuilding
                 Console.WriteLine("Bottom: " + tile.Flux.BottomEdge);
                 Console.WriteLine("Left: " + tile.Flux.LeftEdge + "\n");
             }
+            */
 
             return validTiles;
         }
         
+        public static TileGrid BuildFromXML(string filename)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            XmlReader reader = new XmlTextReader(filename);
+            xmlDoc.Load(reader);
+            XmlElement root = xmlDoc.DocumentElement;
+            int Dimension = (int)Math.Sqrt(root.ChildNodes.Count);
+            TileGrid tileGrid = new TileGrid(Dimension);
+            int TileSize = (int) Math.Sqrt(root.ChildNodes[0].ChildNodes.Count);
+            
+            foreach (XmlElement tile in root.ChildNodes)
+            {
+                FlowTile flowTile = new FlowTile(TileSize);
+                foreach (XmlElement velocity in tile)
+                {
+                    double x = double.Parse(velocity.GetAttribute("relX"));
+                    double y = double.Parse(velocity.GetAttribute("relY"));
+                    double vx = double.Parse(velocity.GetAttribute("vx"));
+                    double vy = double.Parse(velocity.GetAttribute("vy"));
+                    flowTile.SetVelocity(x, y, vx, vy);
+                }
+                tileGrid.AddTile(int.Parse(tile.GetAttribute("row")), int.Parse(tile.GetAttribute("col")), flowTile);
+            }
+            return tileGrid;
+        }
     }
-
 }
