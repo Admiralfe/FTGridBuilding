@@ -9,7 +9,7 @@ namespace FTGridBuilding
     {
         static void Main(string[] args)
         {
-            GridBuilder gridBuilder = new GridBuilder(-4, 4, -4, 4, 5, 10);
+            GridBuilder gridBuilder = new GridBuilder(-2, 2, -2, 2, 5, 10);
 
             for (int row = 0; row < gridBuilder.gridDimension; row++) 
             {

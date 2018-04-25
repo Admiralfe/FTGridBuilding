@@ -2,6 +2,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using static FTGridBuilding.Settings;
 
 namespace lpsolve55
 {
@@ -166,10 +167,6 @@ namespace lpsolve55
             MSG_MILPFEASIBLE = 128,
             MSG_MILPBETTER = 512,
         }
-
-        private const String dllFileNameWindows = "lpsolve55.dll";
-        private const String dllFileNameLinux = "liblpsolve55.so";
-        private const String dllFileNameCurrent = dllFileNameLinux;
 
         [DllImport(dllFileNameCurrent, SetLastError = true)]
         public static extern byte add_column(IntPtr lp, double[] column);

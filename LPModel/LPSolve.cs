@@ -1,9 +1,12 @@
 ﻿﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Linq;
+
 using lpsolve55;
 using FTGridBuilding.FlowTileUtils;
 using FTGridBuilding.GridBuilding;
+
 
 namespace FTGridBuilding.LPModel
 {
@@ -27,9 +30,10 @@ namespace FTGridBuilding.LPModel
         /// <param name="maxXFlux">Maximum flux in X direction as an integer</param>
         /// <param name="minYFlux">Minimum flux in Y direction as an integer</param>
         /// <param name="maxYFlux">Maximum flux in Y direction as an integer</param>
-        /// <param name="currentTileGrid"></param>
+        /// <param name="currentTileGrid">The current incomplete tile grid</param>
+        /// <param name="zeroIndexes">The edges which boundary conditions specify must have zero flux.</param>
         public static void BuildInitialModel(int minXFlux, int maxXFlux, int minYFlux, int maxYFlux,
-            TileGrid currentTileGrid)
+            TileGrid currentTileGrid, int[] zeroIndexes)
         {
             int gridDimension = currentTileGrid.Dimension;
 
@@ -73,7 +77,7 @@ namespace FTGridBuilding.LPModel
                         //Set the bounds for each edge flow. Zero if it is a boundary edge.
                         if (!edgeSetFlag[tileEdges[(int) Direction.Top]])
                         {
-                            if (row == 0)
+                            if (zeroIndexes.Contains(tileEdges[(int) Direction.Top]))
                                 lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Top], 0, 0);
                             else
                                 lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Top], minYFlux, maxYFlux);
@@ -81,15 +85,15 @@ namespace FTGridBuilding.LPModel
 
                         if (!edgeSetFlag[tileEdges[(int) Direction.Right]])
                         {
-                            if (column == 0)
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Left], 0, 0);
+                            if (zeroIndexes.Contains(tileEdges[(int) Direction.Right]))
+                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Right], 0, 0);
                             else
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Left], minXFlux, maxXFlux);
+                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Right], minXFlux, maxXFlux);
                         }
 
                         if (!edgeSetFlag[tileEdges[(int) Direction.Bottom]])
                         {
-                            if (row == gridDimension - 1)
+                            if (zeroIndexes.Contains(tileEdges[(int) Direction.Bottom]))
                                 lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Bottom], 0, 0);
                             else
                                 lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Bottom], minYFlux, maxYFlux);
@@ -97,10 +101,10 @@ namespace FTGridBuilding.LPModel
 
                         if (!edgeSetFlag[tileEdges[(int) Direction.Left]])
                         {
-                            if (column == gridDimension - 1)
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Right], 0, 0);
+                            if (zeroIndexes.Contains(tileEdges[(int) Direction.Left]))
+                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Left], 0, 0);
                             else
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Right], minXFlux, maxXFlux);
+                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Left], minXFlux, maxXFlux);
                         }
                     }
                     //Else there is a tile on the slot and the values are bounded by the flows from that tile
