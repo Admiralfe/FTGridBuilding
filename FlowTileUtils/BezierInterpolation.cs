@@ -2,6 +2,8 @@
 using System.IO;
 using System.Numerics;
 
+using static FTGridBuilding.Settings;
+
 namespace FTGridBuilding.FlowTileUtils
 {
     public class BezierInterpolation
