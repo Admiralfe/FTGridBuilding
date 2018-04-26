@@ -24,7 +24,6 @@ namespace FTGridBuilding.GridBuilding
         private int minYFlux;
         private int maxYFlux;
         private List<Vector2> allowedVelocities = new List<Vector2>();
-        private int[] zeroIndexes;
 
         private TileGrid tileGrid;
 
@@ -35,15 +34,13 @@ namespace FTGridBuilding.GridBuilding
         private int?[,][] boundaryConditions;
 
         public GridBuilder(int minXFluxIn, int maxXFluxIn, int minYFluxIn, int maxYFluxIn, int gridDimensionIn,
-            int innerTileGridDimensionIn, Vector2[] allowedVelocitiesIn, int[] zeroIndexesIn)
+            int innerTileGridDimensionIn, Vector2[] allowedVelocitiesIn)
         {
             minXFlux = minXFluxIn;
             maxXFlux = maxXFluxIn;
             minYFlux = minYFluxIn;
             maxYFlux = maxYFluxIn;
             gridDimension = gridDimensionIn;
-
-            zeroIndexes = zeroIndexesIn;
 
             innerTileGridDimension = innerTileGridDimensionIn;
             
@@ -65,14 +62,12 @@ namespace FTGridBuilding.GridBuilding
             gridDimension = gridDimensionIn;
 
             innerTileGridDimension = innerTileGridDimensionIn;
-
-            zeroIndexes = new int[] {};
             
             allowedVelocities.Add(Vector2.Zero);
             
             tileGrid = new TileGrid(gridDimension);
 
-                        //Hard coded boundary conditions, maybe fix to be more user friendly later!!!!!
+            //Hard coded boundary conditions, maybe fix to be more user friendly later!!!!!
             boundaryConditions = new int?[gridDimension, gridDimension][];
             for (int row = 0; row < gridDimension; row++)
             {
@@ -136,6 +131,7 @@ namespace FTGridBuilding.GridBuilding
                 Console.WriteLine("There was only one valid tile, so it was placed in the spot.");
                 Console.WriteLine("Top flux: {0}, Right Flux: {1}, Bottom Flux: {2}, Left Flux {3}", 
                     validTiles[0].Flux.TopEdge, validTiles[0].Flux.RightEdge, validTiles[0].Flux.BottomEdge, validTiles[0].Flux.LeftEdge);
+                Console.ReadLine();
                 return validTiles[0];
             } 
             
@@ -146,7 +142,6 @@ namespace FTGridBuilding.GridBuilding
             start.FileName = Python;
             start.Arguments = string.Format("{0} {1} {2} {3} {4} {5}",
                 "\"" + PythonScriptPath + "\"", gridDimension, row, col, "\"" + PathToGridXML + "\"", "\"" + PathToValidTilesXML + "\"");
-            Console.WriteLine(start.Arguments);
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             

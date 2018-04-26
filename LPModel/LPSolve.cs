@@ -339,7 +339,7 @@ namespace FTGridBuilding.LPModel
         /*
         public static void Main(string[] args)
         {
-            /*   System.Console.WriteLine(lpsolve.get_Nrows(LpModel));
+            System.Console.WriteLine(lpsolve.get_Nrows(LpModel));
             TileGrid myTileGrid = new TileGrid(dimension);
             Flux flux = new Flux
             {
