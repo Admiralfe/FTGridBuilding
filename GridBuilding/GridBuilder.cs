@@ -70,11 +70,7 @@ namespace FTGridBuilding.GridBuilding
             
             tileGrid = new TileGrid(gridDimension);
 
-<<<<<<< HEAD
             //Hard coded boundary conditions, maybe fix to be more user friendly later!!!!! 
-=======
-            //Hard coded boundary conditions, maybe fix to be more user friendly later!!!!!
->>>>>>> fbcb752b52789b30e5ec0bc0d292b3a8af72527f
             boundaryConditions = new int?[gridDimension, gridDimension][];
             for (int row = 0; row < gridDimension; row++)
             {
