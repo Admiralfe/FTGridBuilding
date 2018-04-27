@@ -23,6 +23,7 @@ namespace FTGridBuilding.GridBuilding
         private int maxXFlux;
         private int minYFlux;
         private int maxYFlux;
+        public float BaseFlux;
         private List<Vector2> allowedVelocities = new List<Vector2>();
 
         private TileGrid tileGrid;
@@ -52,13 +53,15 @@ namespace FTGridBuilding.GridBuilding
             tileGrid = new TileGrid(gridDimension);
         }
         
-        public GridBuilder(int minXFluxIn, int maxXFluxIn, int minYFluxIn, int maxYFluxIn, int gridDimensionIn,
+        public GridBuilder(int minXFluxIn, int maxXFluxIn, int minYFluxIn, int maxYFluxIn, float BaseFluxIn, int gridDimensionIn,
             int innerTileGridDimensionIn)
         {
             minXFlux = minXFluxIn;
             maxXFlux = maxXFluxIn;
             minYFlux = minYFluxIn;
             maxYFlux = maxYFluxIn;
+            BaseFlux = BaseFluxIn;
+
             gridDimension = gridDimensionIn;
 
             innerTileGridDimension = innerTileGridDimensionIn;
@@ -67,7 +70,7 @@ namespace FTGridBuilding.GridBuilding
             
             tileGrid = new TileGrid(gridDimension);
 
-                        //Hard coded boundary conditions, maybe fix to be more user friendly later!!!!!
+            //Hard coded boundary conditions, maybe fix to be more user friendly later!!!!! 
             boundaryConditions = new int?[gridDimension, gridDimension][];
             for (int row = 0; row < gridDimension; row++)
             {
@@ -93,8 +96,38 @@ namespace FTGridBuilding.GridBuilding
                     {
                         boundaryConditions[row, col][(int) LPSolve.Direction.Right] = 2;
                     } 
-                }
+                } 
             }
+            
+            /*
+            boundaryConditions = new int?[gridDimension, gridDimension][];
+            for (int row = 0; row < gridDimension; row++)
+            {
+                for (int col = 0; col < gridDimension; col++)
+                {
+                    boundaryConditions[row, col] = new int?[4];
+                    if (row == 0)
+                    {
+                        boundaryConditions[row, col][(int) LPSolve.Direction.Top] = 2;
+                    }
+
+                    if (col == 0)
+                    {
+                        boundaryConditions[row, col][(int) LPSolve.Direction.Left] = 0;
+                    }
+
+                    if (row == gridDimension - 1)
+                    {
+                        boundaryConditions[row, col][(int) LPSolve.Direction.Bottom] = 2;
+                    }
+
+                    if (col == gridDimension - 1)
+                    {
+                        boundaryConditions[row, col][(int) LPSolve.Direction.Right] = 0;
+                    } 
+                } 
+            }
+            */
             
             //LPSolve.BuildInitialModel(minXFlux, maxXFlux, minYFlux, maxYFlux, tileGrid);
         }

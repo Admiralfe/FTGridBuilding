@@ -9,7 +9,8 @@ namespace FTGridBuilding
     {
         static void Main(string[] args)
         {
-            GridBuilder gridBuilder = new GridBuilder(-4, 4, -4, 4, 5, 10);
+            float baseFlux = 1.5f;
+            GridBuilder gridBuilder = new GridBuilder(-4, 4, -4, 4, baseFlux, 5, 10);
 
             for (int row = 0; row < gridBuilder.gridDimension; row++) 
             {
@@ -21,7 +22,7 @@ namespace FTGridBuilding
             }
 
             TileGrid tileGrid = gridBuilder.GetTileGrid();
-            tileGrid.WriteToXML("TileGrid.xml");
+            tileGrid.WriteToXML("/home/felix/FTGridBuilding/TileGridHorisontal.xml");
         }
     }
 }
