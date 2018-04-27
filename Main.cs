@@ -22,7 +22,13 @@ namespace FTGridBuilding
             }
 
             TileGrid tileGrid = gridBuilder.GetTileGrid();
+<<<<<<< HEAD
             tileGrid.WriteToXML("/home/felix/FTGridBuilding/TileGridHorisontal.xml");
+=======
+            Console.WriteLine(tileGrid.GetFlowTile(4, 4).Flux.TopEdge + " " + tileGrid.GetFlowTile(4, 4).Flux.RightEdge + " " +
+                tileGrid.GetFlowTile(4, 4).Flux.BottomEdge + " " + tileGrid.GetFlowTile(4, 4).Flux.LeftEdge);
+            tileGrid.WriteToXML(@"C:\Users\Felix Liu\source\repos\FTGridbuilding\TileGrid.xml");
+>>>>>>> fbcb752b52789b30e5ec0bc0d292b3a8af72527f
         }
     }
 }

@@ -70,7 +70,11 @@ namespace FTGridBuilding.GridBuilding
             
             tileGrid = new TileGrid(gridDimension);
 
+<<<<<<< HEAD
             //Hard coded boundary conditions, maybe fix to be more user friendly later!!!!! 
+=======
+            //Hard coded boundary conditions, maybe fix to be more user friendly later!!!!!
+>>>>>>> fbcb752b52789b30e5ec0bc0d292b3a8af72527f
             boundaryConditions = new int?[gridDimension, gridDimension][];
             for (int row = 0; row < gridDimension; row++)
             {
@@ -164,6 +168,7 @@ namespace FTGridBuilding.GridBuilding
                 Console.WriteLine("There was only one valid tile, so it was placed in the spot.");
                 Console.WriteLine("Top flux: {0}, Right Flux: {1}, Bottom Flux: {2}, Left Flux {3}", 
                     validTiles[0].Flux.TopEdge, validTiles[0].Flux.RightEdge, validTiles[0].Flux.BottomEdge, validTiles[0].Flux.LeftEdge);
+                Console.ReadLine();
                 return validTiles[0];
             } 
             
@@ -173,7 +178,7 @@ namespace FTGridBuilding.GridBuilding
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = Python;
             start.Arguments = string.Format("{0} {1} {2} {3} {4} {5}",
-                PythonScriptPath, gridDimension, row, col, PathToGridXML, PathToValidTilesXML);
+                "\"" + PythonScriptPath + "\"", gridDimension, row, col, "\"" + PathToGridXML + "\"", "\"" + PathToValidTilesXML + "\"");
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             
@@ -602,4 +607,5 @@ namespace FTGridBuilding.GridBuilding
             return tileGrid;
         }
     }
+
 }

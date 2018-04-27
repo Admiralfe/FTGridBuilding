@@ -4,7 +4,6 @@ using System;
 using System.Runtime.InteropServices;
 using static FTGridBuilding.Settings;
 
-
 namespace lpsolve55
 {
     public static class lpsolve
