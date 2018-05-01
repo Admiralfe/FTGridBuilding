@@ -9,7 +9,7 @@ namespace FTGridBuilding
     {
         static void Main(string[] args)
         {
-            float baseFlux = 1.5f;
+            float baseFlux = 2f;
             GridBuilder gridBuilder = new GridBuilder(-4, 4, -4, 4, baseFlux, 5, 10);
 
             for (int row = 0; row < gridBuilder.gridDimension; row++) 
@@ -22,10 +22,8 @@ namespace FTGridBuilding
             }
 
             TileGrid tileGrid = gridBuilder.GetTileGrid();
-            tileGrid.WriteToXML("/home/felix/FTGridBuilding/TileGridHorisontal.xml");
-            Console.WriteLine(tileGrid.GetFlowTile(4, 4).Flux.TopEdge + " " + tileGrid.GetFlowTile(4, 4).Flux.RightEdge + " " +
-                tileGrid.GetFlowTile(4, 4).Flux.BottomEdge + " " + tileGrid.GetFlowTile(4, 4).Flux.LeftEdge);
-            tileGrid.WriteToXML(@"C:\Users\Felix Liu\source\repos\FTGridbuilding\TileGrid.xml");
+            //tileGrid.WriteToXML("/home/felix/FTGridBuilding/TileGridHorisontal.xml");
+            tileGrid.WriteToXML(@"C:\Users\Felix Liu\source\repos\FTGridbuilding\Tilings\Curve.xml");
         }
     }
 }

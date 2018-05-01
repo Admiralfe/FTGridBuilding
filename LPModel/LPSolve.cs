@@ -78,36 +78,48 @@ namespace FTGridBuilding.LPModel
                         {
                             int? boundaryCondition = boundaryConditions[row, column][(int) Direction.Top];
                             if (boundaryCondition != null)
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Top], (double) boundaryCondition, (double) boundaryCondition);
+                            {
+                                lpsolve.set_bounds(LpModel, tileEdges[(int)Direction.Top], (double)boundaryCondition, (double)boundaryCondition);
+                                edgeSetFlag[tileEdges[(int)Direction.Top]] = true;
+                            }
                             else
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Top], minYFlux, maxYFlux);
+                                lpsolve.set_bounds(LpModel, tileEdges[(int)Direction.Top], minYFlux, maxYFlux);
                         }
 
                         if (!edgeSetFlag[tileEdges[(int) Direction.Right]])
                         {
                             int? boundaryCondition = boundaryConditions[row, column][(int) Direction.Right];
                             if (boundaryCondition != null)
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Right], (double) boundaryCondition, (double) boundaryCondition);
+                            {
+                                lpsolve.set_bounds(LpModel, tileEdges[(int)Direction.Right], (double)boundaryCondition, (double)boundaryCondition);
+                                edgeSetFlag[tileEdges[(int)Direction.Right]] = true;
+                            }
                             else
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Right], minXFlux, maxXFlux);
+                                lpsolve.set_bounds(LpModel, tileEdges[(int)Direction.Right], minXFlux, maxXFlux);
                         }
 
-                        if (!edgeSetFlag[tileEdges[(int) Direction.Bottom]])
+                        if (!edgeSetFlag[tileEdges[(int)Direction.Bottom]])
                         {
-                            int? boundaryCondition = boundaryConditions[row, column][(int) Direction.Bottom];
+                            int? boundaryCondition = boundaryConditions[row, column][(int)Direction.Bottom];
                             if (boundaryCondition != null)
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Bottom], (double) boundaryCondition, (double) boundaryCondition);
+                            {
+                                lpsolve.set_bounds(LpModel, tileEdges[(int)Direction.Bottom], (double)boundaryCondition, (double)boundaryCondition);
+                                edgeSetFlag[tileEdges[(int)Direction.Bottom]] = true;
+                            }
                             else
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Bottom], minYFlux, maxYFlux);
+                                lpsolve.set_bounds(LpModel, tileEdges[(int)Direction.Bottom], minYFlux, maxYFlux);
                         }
 
                         if (!edgeSetFlag[tileEdges[(int) Direction.Left]])
                         {
                             int? boundaryCondition = boundaryConditions[row, column][(int) Direction.Left];
                             if (boundaryCondition != null)
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Left], (double) boundaryCondition, (double) boundaryCondition);
+                            {
+                                lpsolve.set_bounds(LpModel, tileEdges[(int)Direction.Left], (double)boundaryCondition, (double)boundaryCondition);
+                                edgeSetFlag[tileEdges[(int)Direction.Left]] = true;
+                            }
                             else
-                                lpsolve.set_bounds(LpModel, tileEdges[(int) Direction.Left], minXFlux, maxXFlux);
+                                lpsolve.set_bounds(LpModel, tileEdges[(int)Direction.Left], minXFlux, maxXFlux);
                         }
                     }
                     //Else there is a tile on the slot and the values are bounded by the flows from that tile

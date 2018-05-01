@@ -279,5 +279,4 @@ __pycache__/
 !.vscode/extensions.json
 .history
 
-.xml
 # End of https://www.gitignore.io/api/aspnetcore,visualstudiocode
