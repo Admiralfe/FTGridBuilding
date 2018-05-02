@@ -12,6 +12,7 @@ using Random = System.Random;
 using FTGridBuilding.LPModel;
 using FTGridBuilding.FlowTileUtils;
 using static FTGridBuilding.Settings;
+using lpsolve55;
 
 
 namespace FTGridBuilding.GridBuilding
@@ -284,6 +285,25 @@ namespace FTGridBuilding.GridBuilding
             }
 
             return tileGrid;
+        }
+
+        public void AddObstacle(int row, int col) 
+        {
+            //Adds the obstacle to the boundary conditions
+            for (int i = 0; i < 4; i++) 
+            {
+                boundaryConditions[row, col][i] = 0;
+            }
+
+            LPSolve.BuildInitialModel(minXFlux, maxXFlux, minYFlux, maxYFlux, tileGrid, boundaryConditions);
+            if (LPSolve.SolveModel() == 2)
+            {
+                LPSolve.FreeModel();
+                throw new ArgumentException("Obstacle cannot be placed here, resulting tiling cannot be completed.");
+            }
+
+            LPSolve.FreeModel();
+            return;
         }
 
         private Vector2?[] velocityRestrictions(int rowNumber, int colNumber)
