@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FTGridBuilding.FlowTileUtils;
 using FTGridBuilding.GridBuilding;
 using FTGridBuilding.LPModel;
@@ -11,6 +12,10 @@ namespace FTGridBuilding
         {
             float baseFlux = 2f;
             GridBuilder gridBuilder = new GridBuilder(-4, 4, -4, 4, baseFlux, 5, 10);
+            foreach (int[] tile in gridBuilder.AskUserForObstacle())
+            {
+                gridBuilder.AddObstacle(tile[0], tile[1]);
+            }
 
             for (int row = 0; row < gridBuilder.gridDimension; row++) 
             {
@@ -22,8 +27,8 @@ namespace FTGridBuilding
             }
 
             TileGrid tileGrid = gridBuilder.GetTileGrid();
-            //tileGrid.WriteToXML("/home/felix/FTGridBuilding/TileGridHorisontal.xml");
-            tileGrid.WriteToXML(@"C:\Users\Felix Liu\source\repos\FTGridbuilding\Tilings\Curve.xml");
+            tileGrid.WriteToXML("/home/felix/FTGridBuilding/TileGridHorisontal.xml");
+            //tileGrid.WriteToXML(@"C:\Users\Felix Liu\source\repos\FTGridbuilding\Tilings\Curve.xml");
         }
     }
 }
