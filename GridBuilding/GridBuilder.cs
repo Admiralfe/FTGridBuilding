@@ -227,7 +227,7 @@ namespace FTGridBuilding.GridBuilding
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = Python;
             start.Arguments = string.Format("{0} {1} {2} {3} {4} {5}",
-                "\"" + PythonScriptPath + "\"", gridDimension, row, col, "\"" + PathToGridXML + "\"", "\"" + PathToValidTilesXML + "\"");
+                "\"" + PythonCreateTiling + "\"", gridDimension, row, col, "\"" + PathToGridXML + "\"", "\"" + PathToValidTilesXML + "\"");
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             
@@ -240,7 +240,6 @@ namespace FTGridBuilding.GridBuilding
                     Console.WriteLine(result);
                 }
             }
-            
 
             //Process python = Process.Start(start);
             //python.WaitForExit();
@@ -257,6 +256,46 @@ namespace FTGridBuilding.GridBuilding
 
             return validTiles[Convert.ToInt32(result)];
             }
+        /// <summary>
+        /// Retruns a List of row-col-pairs where obstacles should be placed. Each row-col-pair is represented by a List<int
+        /// </summary>
+        /// <returns></returns>
+        public List<List<int>> AskUserForObstacle()
+        {
+            ProcessStartInfo start = new ProcessStartInfo();
+            start.FileName = Python;
+            start.Arguments = string.Format("{0} {1}",
+                "\"" + PythonSetObstacle + "\"", gridDimension);
+            start.UseShellExecute = false;
+            start.RedirectStandardOutput = true;
+            
+            string result;
+            using (Process process = Process.Start(start))
+            {
+                using (StreamReader reader = process.StandardOutput)
+                {
+                    result = reader.ReadToEnd();
+                    Console.WriteLine(result);
+                }
+            }
+
+            if (result == "" || result == null)
+            {
+                return null;
+            }
+            
+            string[] tileStrings = result.Split(";");
+            int i = 0;
+            List<List<int>> obstaclesList = new List<List<int>>();
+            foreach (var tilestr in tileStrings)
+            {
+                string[] rowcol = tilestr.Split(",");
+                obstaclesList[i][0] = Int32.Parse(rowcol[0]);
+                obstaclesList[i][1] = Int32.Parse(rowcol[1]);
+            }
+            return obstaclesList;
+        }
+        
         
         public TileGrid BuildRandomTileGrid()
         {
