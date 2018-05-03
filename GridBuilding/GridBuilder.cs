@@ -35,6 +35,8 @@ namespace FTGridBuilding.GridBuilding
 
         private int?[,][] boundaryConditions;
 
+        public List<int[]> Obstacles;
+
         public GridBuilder(int minXFluxIn, int maxXFluxIn, int minYFluxIn, int maxYFluxIn, int gridDimensionIn,
             int innerTileGridDimensionIn, Vector2[] allowedVelocitiesIn)
         {
@@ -211,6 +213,7 @@ namespace FTGridBuilding.GridBuilding
 
         public FlowTile AskUserForTile(int row, int col)
         {
+            
             LPSolve.BuildInitialModel(minXFlux, maxXFlux, minYFlux, maxYFlux, tileGrid, boundaryConditions);
             List<FlowTile> validTiles = ValidTiles(row, col);
 
@@ -262,15 +265,26 @@ namespace FTGridBuilding.GridBuilding
         /// Retruns a List of row-col-pairs where obstacles should be placed. Each row-col-pair is represented by a List<int
         /// </summary>
         /// <returns></returns>
-        public List<int[]> AskUserForObstacle()
+        public int[] AskUserForObstacle()
         {
+            StringBuilder eligibleStringBuilder = new StringBuilder();
+            foreach (var rowcol in ValidObstaclePositions())
+            {
+                eligibleStringBuilder.Append(rowcol[0] + "," + rowcol[1]);
+            }
+            StringBuilder obstaclesStringBuilder = new StringBuilder();
+            foreach (var rowcol in Obstacles)
+            {
+                obstaclesStringBuilder.Append(rowcol[0] + "," + rowcol[1]);
+            }
+        
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = Python;
-            start.Arguments = string.Format("{0} {1}",
-                PythonSetObstacle, gridDimension);
+            start.Arguments = string.Format("{0} {1} {2} {3}",
+                PythonSetObstacle, gridDimension, obstaclesStringBuilder.ToString(), eligibleStringBuilder.ToString());
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
-            
+        
             string result;
             using (Process process = Process.Start(start))
             {
@@ -281,20 +295,13 @@ namespace FTGridBuilding.GridBuilding
                 }
             }
 
-            if (result == "" || result == null)
+            if (result == "" || result == null || result == "q")
             {
                 return null;
             }
-            
-            string[] tileStrings = result.Split(";");
-            List<int[]> obstaclesList = new List<int[]>();
-            foreach (var tilestr in tileStrings)
-            {
-                if (tilestr == "\n"){continue;}
-                string[] rowcol = tilestr.Split(",");
-                obstaclesList.Add(new int[]{Int32.Parse(rowcol[0]), Int32.Parse(rowcol[1])});
-            }
-            return obstaclesList;
+
+            result.Trim(Environment.NewLine.ToCharArray());
+            return new []{Int32.Parse(result.Split(",")[0]), Int32.Parse(result.Split(",")[1])};
         }
         
         
@@ -330,6 +337,7 @@ namespace FTGridBuilding.GridBuilding
         public void AddObstacle(int row, int col) 
         {
             //Adds the obstacle to the boundary conditions
+            Obstacles.Add(new []{row, col});
             for (int i = 0; i < 4; i++) 
             {
                 boundaryConditions[row, col][i] = 0;

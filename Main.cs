@@ -12,11 +12,16 @@ namespace FTGridBuilding
         {
             float baseFlux = 2f;
             GridBuilder gridBuilder = new GridBuilder(-4, 4, -4, 4, baseFlux, 5, 10);
-            foreach (int[] tile in gridBuilder.AskUserForObstacle())
+            while (true)
             {
+                int[] tile = gridBuilder.AskUserForObstacle();
+                if (tile == null)
+                {
+                    break;
+                }
                 gridBuilder.AddObstacle(tile[0], tile[1]);
             }
-
+            
             for (int row = 0; row < gridBuilder.gridDimension; row++) 
             {
                 for (int col = 0; col < gridBuilder.gridDimension; col++) 
