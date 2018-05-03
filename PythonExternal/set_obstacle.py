@@ -38,8 +38,14 @@ if(eligible_obstacles_str != ''):
         eligible_obstacles.append(Rectangle((int(rowcol_str.split(',')[1]), grid_size - 1 - int(rowcol_str.split(',')[0])), 1, 1))
 ax.add_collection(PatchCollection(eligible_obstacles, facecolor='b'))
 
+def onkeypress(event):
+    if(event.key == 'q'):
+        print('q')
+        sys.exit(0)
+
+cid = fig.canvas.mpl_connect('key_press_event', onkeypress)
+
 xy = plt.ginput(1)
-print(xy)
 datastr = str(grid_size - 1 - int(xy[0][1])) + ',' + str(int(xy[0][0]))
 print(datastr)
 sys.exit(0)
