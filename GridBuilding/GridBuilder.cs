@@ -71,6 +71,7 @@ namespace FTGridBuilding.GridBuilding
             
             tileGrid = new TileGrid(gridDimension);
             
+            /*
             boundaryConditions = new int?[gridDimension, gridDimension][];
             for (int row = 0; row < gridDimension; row++)
             {
@@ -119,9 +120,10 @@ namespace FTGridBuilding.GridBuilding
 
                 }
             }
+            */
             
             
-            /*
+            
             //Hard coded boundary conditions, maybe fix to be more user friendly later!!!!! 
             boundaryConditions = new int?[gridDimension, gridDimension][];
             for (int row = 0; row < gridDimension; row++)
@@ -150,7 +152,7 @@ namespace FTGridBuilding.GridBuilding
                     } 
                 } 
             }
-            */
+            
             
             /*
             boundaryConditions = new int?[gridDimension, gridDimension][];
@@ -227,7 +229,7 @@ namespace FTGridBuilding.GridBuilding
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = Python;
             start.Arguments = string.Format("{0} {1} {2} {3} {4} {5}",
-                "\"" + PythonCreateTiling + "\"", gridDimension, row, col, "\"" + PathToGridXML + "\"", "\"" + PathToValidTilesXML + "\"");
+                PythonCreateTiling, gridDimension, row, col, PathToGridXML, PathToValidTilesXML);
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             
@@ -260,12 +262,12 @@ namespace FTGridBuilding.GridBuilding
         /// Retruns a List of row-col-pairs where obstacles should be placed. Each row-col-pair is represented by a List<int
         /// </summary>
         /// <returns></returns>
-        public List<List<int>> AskUserForObstacle()
+        public List<int[]> AskUserForObstacle()
         {
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = Python;
             start.Arguments = string.Format("{0} {1}",
-                "\"" + PythonSetObstacle + "\"", gridDimension);
+                PythonSetObstacle, gridDimension);
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             
@@ -285,13 +287,12 @@ namespace FTGridBuilding.GridBuilding
             }
             
             string[] tileStrings = result.Split(";");
-            int i = 0;
-            List<List<int>> obstaclesList = new List<List<int>>();
+            List<int[]> obstaclesList = new List<int[]>();
             foreach (var tilestr in tileStrings)
             {
+                if (tilestr == "\n"){continue;}
                 string[] rowcol = tilestr.Split(",");
-                obstaclesList[i][0] = Int32.Parse(rowcol[0]);
-                obstaclesList[i][1] = Int32.Parse(rowcol[1]);
+                obstaclesList.Add(new int[]{Int32.Parse(rowcol[0]), Int32.Parse(rowcol[1])});
             }
             return obstaclesList;
         }
@@ -333,16 +334,34 @@ namespace FTGridBuilding.GridBuilding
             {
                 boundaryConditions[row, col][i] = 0;
             }
+            return;
+        }
 
-            LPSolve.BuildInitialModel(minXFlux, maxXFlux, minYFlux, maxYFlux, tileGrid, boundaryConditions);
-            if (LPSolve.SolveModel() == 2)
+        public List<int[]> ValidObstaclePositions()
+        {
+            //Save the previous boundary conditions locally to reset after each test
+            int?[,][] previousBoundaryConditions = boundaryConditions;
+            List<int[]> validObstaclePositions = new List<int[]>();
+            for (int row = 0; row < gridDimension; row++) 
             {
-                LPSolve.FreeModel();
-                throw new ArgumentException("Obstacle cannot be placed here, resulting tiling cannot be completed.");
+                for(int col = 0; col < gridDimension; col++)
+                {
+                    //Adds the obstacle to boundaryConditions.
+                    AddObstacle(row, col);
+                    LPSolve.BuildInitialModel(minXFlux, maxXFlux, minYFlux, maxYFlux, tileGrid, boundaryConditions);
+                    if (LPSolve.IsFeasible())
+                    {
+                        validObstaclePositions.Add(new int[] {row, col});
+                    }
+
+                    //Free memory allocated to LP-model
+                    LPSolve.FreeModel();
+                    //reset boundaryConditions for next test
+                    boundaryConditions = previousBoundaryConditions;
+                }
             }
 
-            LPSolve.FreeModel();
-            return;
+            return validObstaclePositions;
         }
 
         private Vector2?[] velocityRestrictions(int rowNumber, int colNumber)

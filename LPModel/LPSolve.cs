@@ -1,4 +1,5 @@
-﻿﻿using System.Collections;
+﻿﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Linq;
@@ -194,9 +195,17 @@ namespace FTGridBuilding.LPModel
         /// <returns>The value of the solution</returns>
         public static int SolveModel()
         {
-            lpsolve.solve(LpModel);
+            if (lpsolve.solve(LpModel) != 0) 
+            {
+                throw new Exception("LP-model did not have optimal solution");
+            }
 
             return (int) lpsolve.get_objective(LpModel);
+        }
+
+        public static bool IsFeasible() 
+        {
+            return (lpsolve.solve(LpModel) == 0);
         }
         
         /// <summary>
