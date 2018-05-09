@@ -35,7 +35,7 @@ namespace FTGridBuilding.GridBuilding
 
         private int?[,][] boundaryConditions;
 
-        public List<int[]> Obstacles;
+        public List<int[]> Obstacles = new List<int[]>();
 
         public GridBuilder(int minXFluxIn, int maxXFluxIn, int minYFluxIn, int maxYFluxIn, int gridDimensionIn,
             int innerTileGridDimensionIn, Vector2[] allowedVelocitiesIn)
@@ -268,18 +268,23 @@ namespace FTGridBuilding.GridBuilding
         public int[] AskUserForObstacle()
         {
             StringBuilder eligibleStringBuilder = new StringBuilder();
+            eligibleStringBuilder.Append(";");
             foreach (var rowcol in ValidObstaclePositions())
             {
-                eligibleStringBuilder.Append(rowcol[0] + "," + rowcol[1]);
+                eligibleStringBuilder.Append(rowcol[0] + "," + rowcol[1] + ";");
             }
             StringBuilder obstaclesStringBuilder = new StringBuilder();
+            obstaclesStringBuilder.Append(";");
+
             foreach (var rowcol in Obstacles)
             {
-                obstaclesStringBuilder.Append(rowcol[0] + "," + rowcol[1]);
+                obstaclesStringBuilder.Append(rowcol[0] + "," + rowcol[1] + ";");
             }
         
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = Python;
+            Console.WriteLine(string.Format("{0} {1} {2} {3}",
+                PythonSetObstacle, gridDimension, obstaclesStringBuilder.ToString(), eligibleStringBuilder.ToString()));
             start.Arguments = string.Format("{0} {1} {2} {3}",
                 PythonSetObstacle, gridDimension, obstaclesStringBuilder.ToString(), eligibleStringBuilder.ToString());
             start.UseShellExecute = false;
@@ -294,13 +299,12 @@ namespace FTGridBuilding.GridBuilding
                     Console.WriteLine(result);
                 }
             }
-
+            result.Trim(Environment.NewLine.ToCharArray());
             if (result == "" || result == null || result == "q")
             {
                 return null;
             }
-
-            result.Trim(Environment.NewLine.ToCharArray());
+            Console.WriteLine("hej" + result);
             return new []{Int32.Parse(result.Split(",")[0]), Int32.Parse(result.Split(",")[1])};
         }
         
@@ -347,15 +351,38 @@ namespace FTGridBuilding.GridBuilding
 
         public List<int[]> ValidObstaclePositions()
         {
+            /* 
             //Save the previous boundary conditions locally to reset after each test
-            int?[,][] previousBoundaryConditions = boundaryConditions;
+            int?[,][] previousBoundaryConditions = new int?[gridDimension, gridDimension][];
+
+            for (int row = 0; row < gridDimension; row++)
+            {
+                for (int col = 0; col < gridDimension; col++)
+                {
+                    previousBoundaryConditions[row, col] = new int?[4];
+                    for (int i = 0; i < 4; i++)
+                    {
+                        previousBoundaryConditions[row, col][i] = 
+                            (boundaryConditions[row, col][i].HasValue ? (int?) boundaryConditions[row, col][i].Value : null);
+                    }
+                }
+            }
+            */
+
             List<int[]> validObstaclePositions = new List<int[]>();
             for (int row = 0; row < gridDimension; row++) 
             {
                 for(int col = 0; col < gridDimension; col++)
                 {
+                    int?[] previousValues = new int?[4];
                     //Adds the obstacle to boundaryConditions.
-                    AddObstacle(row, col);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        previousValues[i] = 
+                            (boundaryConditions[row,col][i].HasValue ? (int?) boundaryConditions[row, col][i].Value : null);
+                        boundaryConditions[row, col][i] = 0;
+                    }
+                    
                     LPSolve.BuildInitialModel(minXFlux, maxXFlux, minYFlux, maxYFlux, tileGrid, boundaryConditions);
                     if (LPSolve.IsFeasible())
                     {
@@ -365,8 +392,17 @@ namespace FTGridBuilding.GridBuilding
                     //Free memory allocated to LP-model
                     LPSolve.FreeModel();
                     //reset boundaryConditions for next test
-                    boundaryConditions = previousBoundaryConditions;
+                    for (int i = 0; i < 4; i++) 
+                    {
+                        boundaryConditions[row, col][i] = (previousValues[i].HasValue ? (int?) previousValues[i].Value : null);
+                    }
                 }
+            }
+
+            foreach (int[] iArr in validObstaclePositions) 
+            {
+                Console.WriteLine("row: " + iArr[0]);
+                Console.WriteLine("col: " + iArr[1] + "\n");
             }
 
             return validObstaclePositions;
