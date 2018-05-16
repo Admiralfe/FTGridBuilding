@@ -37,7 +37,7 @@ for tile in velocity_root:
 no_valid_tiles = len(valid_tiles_root)
 valid_tiles_axes = []
 for i in range(0, no_valid_tiles):
-    valid_tiles_axes.append(valid_tiles_fig.add_subplot(int((no_valid_tiles - no_valid_tiles%3)/3 + 1), 3, i + 1))
+    valid_tiles_axes.append(valid_tiles_fig.add_subplot(int((no_valid_tiles - no_valid_tiles%2)/2 + 1), 2, i + 1))
 
 for i in range(0, no_valid_tiles):
     ax = valid_tiles_axes[i]
