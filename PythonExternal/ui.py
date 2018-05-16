@@ -42,6 +42,8 @@ for i in range(0, no_valid_tiles):
 for i in range(0, no_valid_tiles):
     ax = valid_tiles_axes[i]
     ax.set_title(i)
+    ax.set_yticklabels([])
+    ax.set_xticklabels([])
     for vel in valid_tiles_root[i]:
         x = float(vel.get("relX"))
         y = float(vel.get("relY"))
