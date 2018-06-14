@@ -11,7 +11,7 @@ namespace FTGridBuilding
         static void Main(string[] args)
         {
             float baseFlux = 2f;
-            GridBuilder gridBuilder = new GridBuilder(-4, 4, -4, 4, baseFlux, 5, 10);
+            GridBuilder gridBuilder = new GridBuilder(-4, 4, -4, 4, baseFlux, 4, 10);
             while (true)
             {
                 int[] tile = gridBuilder.AskUserForObstacle();
@@ -32,7 +32,7 @@ namespace FTGridBuilding
             }
 
             TileGrid tileGrid = gridBuilder.GetTileGrid();
-            tileGrid.WriteToXML("/home/felix/FTGridBuilding/TileGridHorisontal.xml");
+            tileGrid.WriteToXML("/home/felix/FTGridBuilding/Tilings/LeoGrid2.xml");
             //tileGrid.WriteToXML(@"C:\Users\Felix Liu\source\repos\FTGridbuilding\Tilings\Curve.xml");
         }
     }

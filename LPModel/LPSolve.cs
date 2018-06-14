@@ -216,9 +216,9 @@ namespace FTGridBuilding.LPModel
             lpsolve.delete_lp(LpModel);
         }
 
-        ///<summary>
-        ///Computes the 1d array index (counted from top left to bottom right)
-        ///for edge corresponding to flux from sourceCell to destCell in a square grid.
+        /// <summary>
+        /// Computes the 1d array index (counted from top left to bottom right)
+        /// for edge corresponding to flux from sourceCell to destCell in a square grid.
         /// Indexes of variables in lpsolve start at 1, so the return is indexed starting from 1.
         /// </summary>
         /// <param name="sourceCell">

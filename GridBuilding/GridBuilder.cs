@@ -211,12 +211,19 @@ namespace FTGridBuilding.GridBuilding
             xmlDoc.Save(filename);
         }
 
+        /// <summary>
+        /// Allows users to choose a valid flow tile in a given slot by plotting all the valid flow tiles using Python's matplotlib
+        /// and having the user click on which tile they want to place in the slot.
+        /// </summary>
+        /// <param name="row"> Row index of the tile slot </param>
+        /// <param name="col"> Column index of the tile slot </param>
         public FlowTile AskUserForTile(int row, int col)
         {
-            
             LPSolve.BuildInitialModel(minXFlux, maxXFlux, minYFlux, maxYFlux, tileGrid, boundaryConditions);
+
             List<FlowTile> validTiles = ValidTiles(row, col);
 
+            //If there is only one valid tile, there is no choice to be made so we simply add the tile to the tiling.
             if (validTiles.Count == 1) 
             {
                 Console.WriteLine("There was only one valid tile, so it was placed in the spot.");
@@ -224,11 +231,12 @@ namespace FTGridBuilding.GridBuilding
                     validTiles[0].Flux.TopEdge, validTiles[0].Flux.RightEdge, validTiles[0].Flux.BottomEdge, validTiles[0].Flux.LeftEdge);
                 Console.ReadLine();
                 return validTiles[0];
-            } 
+            }
             
             tileGrid.WriteToXML(PathToGridXML);    
             WriteTilesToXML(validTiles, PathToValidTilesXML);
             
+            //Settings for the plotting script in python.
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = Python;
             start.Arguments = string.Format("{0} {1} {2} {3} {4} {5}",
@@ -237,6 +245,7 @@ namespace FTGridBuilding.GridBuilding
             start.RedirectStandardOutput = true;
             
             string result;
+            //Runs the python script for plotting
             using (Process process = Process.Start(start))
             {
                 using (StreamReader reader = process.StandardOutput)
@@ -257,12 +266,14 @@ namespace FTGridBuilding.GridBuilding
             //var num = Convert.ToInt32(Console.ReadLine());
                         
             //python.Close();
+            
+            //IMPORTANT! Frees allocated memory, removing this line will likely cause overflow errors.
             LPSolve.FreeModel();
 
             return validTiles[Convert.ToInt32(result)];
             }
         /// <summary>
-        /// Retruns a List of row-col-pairs where obstacles should be placed. Each row-col-pair is represented by a List<int
+        /// Retruns a List of row-col-pairs where obstacles should be placed. Each row-col-pair is represented by a List of integers
         /// </summary>
         /// <returns></returns>
         public int[] AskUserForObstacle()
@@ -408,8 +419,11 @@ namespace FTGridBuilding.GridBuilding
             return validObstaclePositions;
         }
 
+        //Determines the restrictions on the corner velocities in a given tile slot due to corner velocities having to 
+        //match with neighboring tiles. Returns an array containing the valid velocities for each corner, or null if there is no retriction.
         private Vector2?[] velocityRestrictions(int rowNumber, int colNumber)
         {
+            //Nullable so that we can use null to represent no restriction.
             Vector2? allowedTopLeftVelocity = null;
             Vector2? allowedBottomLeftVelocity = null;
             Vector2? allowedTopRightVelocity = null;
@@ -537,13 +551,16 @@ namespace FTGridBuilding.GridBuilding
             };
         }
 
+        //Generates all combinations of alid corner velocity combinations for a tile, given the restrictions on that tile.
         private List<CornerVelocities> cornerVelocityCombinations(Vector2?[] restrictions)
         {
+            //Array of lists for valid velocities. Array index is for the 4 corners, and the list holds all the valid corner velocities.
             List<Vector2>[] iteratorVectorList = new List<Vector2>[4];
             
             for (int i = 0; i < 4; i++)
             {
                 iteratorVectorList[i] = new List<Vector2>();
+                //null value represents no restrictions, and we add all allowed velocities as possibilities.
                 if (!restrictions[i].HasValue)
                 {
                     foreach (Vector2 cornerVelocity in allowedVelocities)
